@@ -4,18 +4,18 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type Upgrader struct {
+// WSUpgrader инкапсулирует апгрейдер для websocket соединения
+type WSUpgrader struct {
 	websocket.Upgrader
 }
 
-func NewUpgrader() *Upgrader {
+// NewUpgrader возвращает указатель на экземпляр апгрейдера
+func NewUpgrader() *WSUpgrader {
 
-	upgrader := Upgrader{
+	return &WSUpgrader{
 		websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
 		},
 	}
-
-	return &upgrader
 }

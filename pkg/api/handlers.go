@@ -11,7 +11,7 @@ import (
 func HandleConnections(w http.ResponseWriter, r *http.Request) {
 
 	// получаем экземпляр апгрейдера
-	upgrader := upgrader.NewWSUpgrader()
+	upgrader := upgrader.GetWSUpgrader()
 
 	// меняем тип соединения
 	conn, err := upgrader.Upgrade(w, r, nil)

@@ -7,16 +7,23 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/IPampurin/WebSocket-Server/pkg/api"
 	"github.com/IPampurin/WebSocket-Server/pkg/server"
 )
 
 func main() {
 
+	// задаём базовый контекст
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// запускаем прослушивание сигналов отмены
 	go signalListener(ctx, cancel)
 
+	// запускаем api
+	api.ApiInit()
+
+	// запускаем сервер
 	if err := server.Run(ctx); err != nil {
 		fmt.Printf("Сервер завершился с ошибкой: %v", err)
 		return

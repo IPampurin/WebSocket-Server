@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
+	"time"
 )
 
 const (
@@ -16,30 +14,38 @@ const (
 
 func Run(ctx context.Context) error {
 
-	// Инициализируем api
-
-	// Используем
-
-	// Создаём и настраиваем сервер
+	// создаём и настраиваем сервер
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%s", hostServer, portServer),
 	}
 
-	idleConnsClosed := make(chan struct{})
+	// errCh канал для ошибок при работе сервера
+	errCh := make(chan error, 1)
 
+	// запускаем сервер
 	go func() {
 
-		sigChan := make(chan os.Signal, 1)
-		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-		defer signal.Stop(sigChan)
-		<-sigChan
-
-		if err := srv.Shutdown(context.Background()); err != http.ErrServerClosed {
-
+		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+			errCh <- err
 		}
+
 	}()
 
-	<-idleConnsClosed
+	// ждём либо отмены контекста и завершения сервера, либо появления ошибки
+	select {
+	case <-ctx.Done():
 
-	return nil
+		ctxShutdown, cancelShutdown := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancelShutdown()
+
+		if err := srv.Shutdown(ctxShutdown); err != nil {
+			return fmt.Errorf("ошибка при graceful shutdown сервера: %w", err)
+		}
+
+		return nil
+
+	case err := <-errCh:
+
+		return err
+	}
 }

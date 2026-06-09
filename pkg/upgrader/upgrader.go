@@ -9,8 +9,8 @@ type WSUpgrader struct {
 	websocket.Upgrader
 }
 
-// NewUpgrader возвращает указатель на экземпляр апгрейдера
-func NewUpgrader() *WSUpgrader {
+// NewWSUpgrader возвращает указатель на экземпляр апгрейдера
+func NewWSUpgrader() *WSUpgrader {
 
 	return &WSUpgrader{
 		websocket.Upgrader{

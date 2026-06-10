@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/IPampurin/WebSocket-Server/pkg/api"
 )
 
 const (
@@ -13,6 +15,9 @@ const (
 )
 
 func Run(ctx context.Context) error {
+
+	// запускаем api
+	api.RoutingInit()
 
 	// создаём и настраиваем сервер
 	srv := &http.Server{

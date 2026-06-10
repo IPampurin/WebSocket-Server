@@ -7,7 +7,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/IPampurin/WebSocket-Server/pkg/api"
 	"github.com/IPampurin/WebSocket-Server/pkg/server"
 )
 
@@ -19,9 +18,6 @@ func main() {
 
 	// запускаем прослушивание сигналов отмены
 	go signalListener(ctx, cancel)
-
-	// запускаем api
-	api.ApiInit()
 
 	// запускаем сервер
 	if err := server.Run(ctx); err != nil {

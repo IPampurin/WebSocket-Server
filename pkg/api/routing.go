@@ -2,7 +2,7 @@ package api
 
 import "net/http"
 
-func ApiInit() {
+func RoutingInit() {
 
 	http.HandleFunc("/ws", HandleConnections)
 }

@@ -1,25 +1,34 @@
-# WebSocket Server - пример создания сервера: от HTTP к WebSocket
+# WebSocket Server - от HTTP к WebSocket
 
 ### 📋 Описание проекта  
 
-В данном репозитории приведён пример создания обработчика, который будет принимать входящие запросы и «поднимать» их до уровня WebSocket.
+В данном репозитории приведён пример WebSocket-сервера на Go с эхо-обработкой сообщений.  
+HTTP-сервер принимает входящие запросы и «поднимает» их до уровня WebSocket.  
 
 ### 🖥️ Возможности  
 
-
+- Преобразование HTTP → WebSocket с помощью `gorilla/websocket`  
+- Эхо-ответ на каждое сообщение клиента  
+- Graceful shutdown при получении SIGINT/SIGTERM  
+- Пинг/понг обработка для поддержания соединения  
 
 ### 🗂️ Структура проекта  
 
 ```bash
-├── main.go                       
-├── Dockerfile                    
-├── compose.yml                   
-├── go.mod                        
-├── go.sum                        
-├── readme.md                     # этот файл
+.
+
 ├── pkg/
-│   ├── api/                      # обработчик HTTP-запросов
-│   ├── server/                   # запуск HTTP-сервера
+│   ├── api/               
+│   │   ├── handlers.go    # логика WebSocket соединения
+│   │   └── routing.go     # маршрутизация
+│   ├── server/            
+│   │   └── server.go      # запуск и graceful shutdown
+│   └── upgrader/          
+│       └── upgrader.go    # WebSocket апгрейдер (синглтон)
+├── main.go                # точка входа, обработка сигналов
+├── go.mod
+├── go.sum
+└── readme.md              # этот файл
 ```
 
 
@@ -27,18 +36,20 @@
 
 **Требования:**  
 
-- Docker  
-- Свободные порты: 8081 (веб-интерфейс), 5432 (PostgreSQL), 6379 (Redis)  
+- Go 1.21+  
+- Свободный порт: 8081    
 
-**Docker-образы**  
+**Запуск:**  
 
-- postgres:16  
-- redis:7  
+    cd ./ && go run main.go  
 
-**Запуск системы:**  
+- Сервер запустится на localhost:8081 (WebSocket endpoint: ws://localhost:8081/ws)  
 
-    cd ./ && docker compose up  
+### 🧪 Тестирование
 
+Через Postman:
 
-- После успешного запуска веб-интерфейс будет доступен по адресу: http://localhost:8081  
-
+    Создайте WebSocket Request  
+    URL: ws://localhost:8081/ws  
+    Нажмите Connect  
+    Отправьте сообщение, получите эхо-ответ  
